@@ -26,7 +26,6 @@ public:
            const GLchar * geometryShaderSource = NULL);
 	~Shader();
     
-    GLuint getProgram()                                 { return program; }
     GLuint getAttribLocation(const char * attrib)       { return glGetAttribLocation(program, attrib); }
     GLuint getUniformLocation(const char * uniform)     { return glGetUniformLocation(program, uniform); }
     
