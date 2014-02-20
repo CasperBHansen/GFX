@@ -15,10 +15,10 @@
 class VertexBufferObject
 {
 public:
-	VertexBufferObject(GLenum type, GLfloat * vertices, GLuint count, Shader * shader);
+	VertexBufferObject(GLenum type, GLfloat * vertices, GLsizei size, GLuint count);
 	~VertexBufferObject();
     
-    void draw();
+    void render(GLuint vtxAttrib);
 
 protected:
 private:
@@ -27,8 +27,6 @@ private:
     
     GLuint vbo;
     GLuint vtxAttrib;
-    
-    Shader * shader;
 };
 
 #endif // VERTEXBUFFEROBJECT_H

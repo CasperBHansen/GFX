@@ -14,10 +14,6 @@ using std::endl;
 
 #include <cstring>
 
-const GLchar * defaultVertexShader   = NULL;
-const GLchar * defaultFragmentShader = NULL;
-const GLchar * defaultGeometryShader = NULL;
-
 Shader::Shader(const GLchar * vertexShaderSource,
                const GLchar * fragmentShaderSource,
                const GLchar * geometryShaderSource)
@@ -100,7 +96,7 @@ void Shader::compileShader(ShaderType type, const GLchar * src)
 
 void Shader::use()
 {
-    if (valid) glUseProgram(program);
+    glUseProgram(program);
 }
 
 bool Shader::isValid()
@@ -108,3 +104,27 @@ bool Shader::isValid()
     return valid;
 }
 
+void Shader::uniform(const char * location, GLfloat v0)
+{
+    glUniform1f(getUniformLocation(location), v0);
+}
+
+void Shader::uniform(const char * location, GLfloat v0, GLfloat v1)
+{
+    glUniform2f(getUniformLocation(location), v0, v1);
+}
+
+void Shader::uniform(const char * location, GLfloat v0, GLfloat v1, GLfloat v2)
+{
+    glUniform3f(getUniformLocation(location), v0, v1, v2);
+}
+
+void Shader::uniform(const char * location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3)
+{
+    glUniform4f(getUniformLocation(location), v0, v1, v2, v3);
+}
+
+void Shader::uniformMatrix4fv(const char * location, const GLfloat * value)
+{
+    glUniformMatrix4fv(getUniformLocation(location), 1, GL_FALSE, value);
+}

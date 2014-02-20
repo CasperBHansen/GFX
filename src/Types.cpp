@@ -6,13 +6,8 @@
 
 #include "Types.h"
 
-std::ostream& operator<<(std::ostream& os, const Point2D &point)
+std::ostream& operator<<(std::ostream& os, const Vector &vector)
 {
-    return os << '(' << point.x << ',' << point.y << ')';
-}
-
-std::ostream& operator<<(std::ostream& os, const Vector2D &vector)
-{
-    return os << '(' << vector.x << ',' << vector.y << ')';
+    return os << '(' << vector.x << ',' << vector.y << ',' << vector.z << ')';
 }
 

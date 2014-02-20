@@ -12,17 +12,14 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-VertexBufferObject::VertexBufferObject(GLenum type, GLfloat * vertices, GLuint count, Shader * shader)
+VertexBufferObject::VertexBufferObject(GLenum type, GLfloat * vertices, GLsizei size, GLuint count)
 {
     this->type  = type;
     this->count = count;
-    this->shader = shader;
     
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    
-    vtxAttrib = shader->getAttribLocation("vtx");
+    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 }
 
 VertexBufferObject::~VertexBufferObject()
@@ -31,13 +28,14 @@ VertexBufferObject::~VertexBufferObject()
     glDeleteBuffers(1, &vbo);
 }
 
-void VertexBufferObject::draw()
+void VertexBufferObject::render(GLuint vtxAttrib)
 {
     glVertexAttribPointer(vtxAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    
     glEnableVertexAttribArray(vtxAttrib);
     
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(type, 0, count);
     
     glDisableVertexAttribArray(vtxAttrib);
 }

@@ -9,30 +9,21 @@
 
 #include <iostream>
 
-struct Point2D {
-    int x, y;
+struct Vector {
+    float x, y, z, w;
     
-    Point2D(int x = 0, int y = 0)
+    Vector(float x = 0.0f, float y = 0.0f, float z = 0.0f)
     {
         this->x = x;
         this->y = y;
-    }
-};
-
-struct Vector2D {
-    float x, y;
-    
-    Vector2D(float x = 0.0f, float y = 0.0f)
-    {
-        this->x = x;
-        this->y = y;
+        this->z = z;
+        this->w = 1.0f;
     }
 };
 
 
 // declare prototypes of operator overloading
-std::ostream& operator<<(std::ostream& os, const Point2D &point);
-std::ostream& operator<<(std::ostream& os, const Vector2D &vector);
+std::ostream& operator<<(std::ostream& os, const Vector &vector);
 
 #endif // TYPES_H
 

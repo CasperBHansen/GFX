@@ -1,7 +1,7 @@
 CXX=g++ -I/usr/include -Wall -pedantic
 LDFLAGS=-lGL -lGLU -lglut -lGLEW
-SRC=*.cpp */*.cpp
-OBJ=*.o */*.o
+SRC=*.cpp
+OBJ=*.o
 PROJECT='Introduction to Computer Graphics'
 PROD=GFX
 
