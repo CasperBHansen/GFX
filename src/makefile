@@ -1,4 +1,4 @@
-CXX=g++ -I/usr/include -Wall -pedantic
+CXX=g++ -std=c++11 -I/usr/include -Wall -pedantic
 LDFLAGS=-lGL -lGLU -lglut -lGLEW
 SRC=*.cpp
 OBJ=*.o

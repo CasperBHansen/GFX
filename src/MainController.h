@@ -12,13 +12,21 @@
 #include <GL/freeglut.h>
 
 #include "Camera.h"
-#include "Cube.h"
 #include "Shader.h"
 #include "VertexBufferObject.h"
 
-#define NUM_KEYS 8
+#include "House.h"
+
+#define NUM_KEYS 10
+
+typedef bool KeyState;
+
+#define KEY_STATE_DEPRESSED true
+#define KEY_STATE_RELEASED  false
 
 typedef enum {
+    ENTER_KEY,
+    SPACE_KEY,
     UP_KEY,
     DOWN_KEY,
     LEFT_KEY,
@@ -27,7 +35,7 @@ typedef enum {
     A_KEY,
     S_KEY,
     D_KEY
-}Key;
+} Key;
 
 class MainController
 {
@@ -39,15 +47,13 @@ public:
     void update();
     void render();
     
-    void keyPress(unsigned char key, int x, int y);
-    void keyPress(int key, int x, int y);
-    void keyRelease(unsigned char key, int x, int y);
-    void keyRelease(int key, int x, int y);
+    void onKeyboard(KeyState state, unsigned char key, int x, int y);
+    void onKeyboard(KeyState state, int key, int x, int y);
 
 protected:
 private:
     Camera * camera;
-    Cube * cube;
+    House * house;
     
     Shader * shader;
     VertexBufferObject * vbo;

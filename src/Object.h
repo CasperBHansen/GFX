@@ -25,7 +25,7 @@ public:
            const glm::vec3 &scale    = glm::vec3(1,1,1));
 	virtual ~Object();
     
-    virtual glm::mat4 getTranform();
+    virtual glm::mat4 getTransform();
     
     void setPosition(const glm::vec3 &vec);
     void setRotation(const glm::vec3 &vec);
@@ -38,12 +38,13 @@ public:
     float distanceTo(Object * object);
     
 protected:
+    glm::vec3 _position;
+    
 private:
     glm::mat4 matrix;
     
     glm::vec3 _scale;
     glm::vec3 _rotation;
-    glm::vec3 _position;
 };
 
 #endif // OBJECT_H

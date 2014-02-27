@@ -11,30 +11,21 @@
 using std::cout;
 using std::endl;
 
-GLfloat triangle[9] =
-{
-    -1.0f, -1.0f, 0.0f,
-     1.0f, -1.0f, 0.0f,
-     0.0f,  1.0f, 0.0f
-};
-
-#define MOVE_SPEED 0.1f
-#define ROTATE_SPEED 0.01f
+#define MOVE_SPEED 0.5f
+#define ROTATE_SPEED 0.5f
 
 MainController::MainController()
 {
-    memset(keys, 0, sizeof(keys));
+    memset(keys, KEY_STATE_RELEASED, sizeof(keys));
     
-    camera = new Camera();
-    cube = new Cube();
-    
+    camera = new Camera(glm::vec3(0,0,-5.0));
+    house = new House();
     shader = new Shader();
-    vbo = new VertexBufferObject(GL_TRIANGLES, triangle, sizeof(triangle), 3);
 }
 
 MainController::~MainController()
 {
-	delete cube;
+	delete house;
     delete camera;
 }
 
@@ -48,140 +39,75 @@ void MainController::init()
 
 void MainController::update()
 {
-    if (keys[W_KEY]) {
-        camera->translate(glm::vec3(0,0,1) * MOVE_SPEED);
-    }
+    if (keys[W_KEY])        camera->translate(glm::vec3(0,0,1) * MOVE_SPEED);
+    if (keys[S_KEY])        camera->translate(glm::vec3(0,0,-1) * MOVE_SPEED);
+    if (keys[A_KEY])        camera->translate(glm::vec3(1,0,0) * MOVE_SPEED);
+    if (keys[D_KEY])        camera->translate(glm::vec3(-1,0,0) * MOVE_SPEED);
     
-    if (keys[S_KEY]) {
-        camera->translate(glm::vec3(0,0,-1) * MOVE_SPEED);
-    }
-    
-    if (keys[A_KEY]) {
-        camera->translate(glm::vec3(1,0,0) * MOVE_SPEED);
-    }
-    
-    if (keys[D_KEY]) {
-        camera->translate(glm::vec3(-1,0,0) * MOVE_SPEED);
-    }
-    
-    if (keys[UP_KEY]) {
-        cube->rotate(glm::vec3(-1,0,0) * ROTATE_SPEED);
-    }
-    
-    if (keys[DOWN_KEY]) {
-        cube->rotate(glm::vec3(1,0,0) * ROTATE_SPEED);
-    }
-    
-    if (keys[LEFT_KEY]) {
-        cube->rotate(glm::vec3(0,1,0) * ROTATE_SPEED);
-    }
-    
-    if (keys[RIGHT_KEY]) {
-        cube->rotate(glm::vec3(0,-1,0) * ROTATE_SPEED);
-    }
+    if (keys[UP_KEY])       camera->rotate(glm::vec3(-1,0,0) * ROTATE_SPEED);
+    if (keys[DOWN_KEY])     camera->rotate(glm::vec3(1,0,0) * ROTATE_SPEED); 
+    if (keys[LEFT_KEY])     camera->rotate(glm::vec3(0,1,0) * ROTATE_SPEED);
+    if (keys[RIGHT_KEY])    camera->rotate(glm::vec3(0,-1,0) * ROTATE_SPEED);
 }
 
 void MainController::render()
 {
-    glm::mat4 projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-    glm::mat4 mvp = projection * camera->getTranform() * cube->getTranform();
-     
-    shader->use();
-    shader->uniformMatrix4fv("mvp", glm::value_ptr(mvp));
-    shader->uniform("color", 1.0f, 0.0f, 0.0f);
-    vbo->render(shader->getAttribLocation("vtx"));
-    
-    glutPostRedisplay();
+    house->render(shader);
 }
     
-void MainController::keyPress(unsigned char key, int x, int y)
+void MainController::onKeyboard(KeyState state, unsigned char key, int x, int y)
 {
     switch (key) {
     
         case 27:
             glutLeaveMainLoop();
             break;
+    
+        case 13:
+            keys[ENTER_KEY] = state;
+            break;
+    
+        case ' ':
+            keys[SPACE_KEY] = state;
+            break;
         
         case 'w':
-            keys[W_KEY] = true;
+            keys[W_KEY] = state;
             break;
         
         case 's':
-            keys[S_KEY] = true;
+            keys[S_KEY] = state;
             break;
         
         case 'a':
-            keys[A_KEY] = true;
+            keys[A_KEY] = state;
             break;
         
         case 'd':
-            keys[D_KEY] = true;
+            keys[D_KEY] = state;
             break;
     }
 }
 
-void MainController::keyPress(int key, int x, int y)
+void MainController::onKeyboard(KeyState state, int key, int x, int y)
 {
     switch (key) {
         
         case GLUT_KEY_UP:
-            keys[UP_KEY] = true;
+            keys[UP_KEY] = state;
             break;
         
         case GLUT_KEY_DOWN:
-            keys[DOWN_KEY] = true;
+            keys[DOWN_KEY] = state;
             break;
         
         case GLUT_KEY_LEFT:
-            keys[LEFT_KEY] = true;
+            keys[LEFT_KEY] = state;
             break;
         
         case GLUT_KEY_RIGHT:
-            keys[RIGHT_KEY] = true;
+            keys[RIGHT_KEY] = state;
             break;
     }
 }
 
-void MainController::keyRelease(unsigned char key, int x, int y)
-{
-    switch (key) {
-        
-        case 'w':
-            keys[W_KEY] = false;
-            break;
-        
-        case 's':
-            keys[S_KEY] = false;
-            break;
-        
-        case 'a':
-            keys[A_KEY] = false;
-            break;
-        
-        case 'd':
-            keys[D_KEY] = false;
-            break;
-    }
-}
-
-void MainController::keyRelease(int key, int x, int y)
-{
-    switch (key) {
-        
-        case GLUT_KEY_UP:
-            keys[UP_KEY] = false;
-            break;
-        
-        case GLUT_KEY_DOWN:
-            keys[DOWN_KEY] = false;
-            break;
-        
-        case GLUT_KEY_LEFT:
-            keys[LEFT_KEY] = false;
-            break;
-        
-        case GLUT_KEY_RIGHT:
-            keys[RIGHT_KEY] = false;
-            break;
-    }
-}

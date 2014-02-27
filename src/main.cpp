@@ -15,34 +15,49 @@
 #define WINDOW_WIDTH  600
 #define WINDOW_HEIGHT 480
 
+#define FRAMES_PER_SECOND 30
+#define FRAME_RATE (1000 / FRAMES_PER_SECOND)
+
 MainController * program;
 
 static void render_callback()
 {
-    program->update();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    program->render();
-    glutSwapBuffers();
+    static int last_time = glutGet(GLUT_ELAPSED_TIME);
+    static int curr_time = 0;
+    
+    curr_time = glutGet(GLUT_ELAPSED_TIME);
+    
+    if ( (curr_time - last_time) > FRAME_RATE ) {
+        
+        program->update();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        program->render();
+        glutSwapBuffers();
+        
+        last_time = curr_time;
+    }
+    
+    glutPostRedisplay();
 }
 
 static void kbd_down_callback(unsigned char key, int x, int y)
 {
-    program->keyPress(key, x, y);
+    program->onKeyboard(KEY_STATE_DEPRESSED, key, x, y);
 }
 
 static void kbd_up_callback(unsigned char key, int x, int y)
 {
-    program->keyRelease(key, x, y);
+    program->onKeyboard(KEY_STATE_RELEASED, key, x, y);
 }
 
 static void kbd_special_down_callback(int key, int x, int y)
 {
-    program->keyPress(key, x, y);
+    program->onKeyboard(KEY_STATE_DEPRESSED, key, x, y);
 }
 
 static void kbd_special_up_callback(int key, int x, int y)
 {
-    program->keyRelease(key, x, y);
+    program->onKeyboard(KEY_STATE_RELEASED, key, x, y);
 }
 
 int main(int argc, char * argv[]) {

@@ -25,7 +25,7 @@ Object::~Object()
 	// destructor
 }
 
-glm::mat4 Object::getTranform()
+glm::mat4 Object::getTransform()
 {
     float s[16] =
     {

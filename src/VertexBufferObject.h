@@ -10,12 +10,12 @@
 
 #include <GL/glew.h>
 
-#include "Shader.h"
+#include "BufferObject.h"
 
-class VertexBufferObject
+class VertexBufferObject : public BufferObject
 {
 public:
-	VertexBufferObject(GLenum type, GLfloat * vertices, GLsizei size, GLuint count);
+	VertexBufferObject(GLenum type, GLfloat * vertices, GLuint count);
 	~VertexBufferObject();
     
     void render(GLuint vtxAttrib);
@@ -25,7 +25,6 @@ private:
     GLenum type;
     GLuint count;
     
-    GLuint vbo;
     GLuint vtxAttrib;
 };
 
