@@ -13,9 +13,7 @@
 
 #include "Camera.h"
 #include "Shader.h"
-#include "VertexBufferObject.h"
-
-#include "House.h"
+#include "Mesh.h"
 
 #define NUM_KEYS 10
 
@@ -53,10 +51,9 @@ public:
 protected:
 private:
     Camera * camera;
-    House * house;
+    Mesh * object;
     
     Shader * shader;
-    VertexBufferObject * vbo;
     
     bool keys[NUM_KEYS];
 };

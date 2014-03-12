@@ -27,8 +27,6 @@ public:
     glm::vec2 getWindowCenter();
     glm::vec2 getViewport();
     glm::vec3 getDirectionOfProjection();
-    
-    int test();
 
 protected:
 private:
@@ -42,7 +40,7 @@ private:
     glm::vec2 min; // lower-left
     glm::vec2 max; // upper-right
     
-    float front, back; // delimiter planes
+    float near, far; // clipping planes
 };
 
 #endif // CAMERA_H

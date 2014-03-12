@@ -63,7 +63,7 @@ static void kbd_special_up_callback(int key, int x, int y)
 int main(int argc, char * argv[]) {
     
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA);
+    glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutCreateWindow("Introduction to Computer Graphics");
     glutDisplayFunc(&render_callback);

@@ -12,19 +12,27 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-#include <cstring>
+#include <string>
+using std::string;
 
-Shader::Shader(const GLchar * vertexShaderSource,
-               const GLchar * fragmentShaderSource,
-               const GLchar * geometryShaderSource)
+#include <fstream>
+
+Shader::Shader(const char * filename)
 {
     valid = 0;
     program = glCreateProgram();
+    this->filename = filename;
+    
+    // fall back on default shader, if no source is provided.
+    if ( !(this->filename) ) {
+        cerr << "No shader file provided, falling back on default shader." << endl;
+        this->filename = "resources/shaders/default.shader";
+    }
     
     // compile shaders
-    compileShader(VERTEX_SHADER_PROGRAM, vertexShaderSource);
-    compileShader(FRAGMENT_SHADER_PROGRAM, fragmentShaderSource);
-    compileShader(GEOMETRY_SHADER_PROGRAM, geometryShaderSource);
+    compileShader(VERTEX_SHADER);
+    compileShader(FRAGMENT_SHADER);
+    compileShader(GEOMETRY_SHADER);
     
     // link shader program
     GLint status;
@@ -55,29 +63,36 @@ Shader::~Shader()
     glDeleteProgram(program);
 }
 
-GLenum Shader::getGLShaderType(ShaderType type)
+void Shader::compileShader(ShaderType type)
 {
-    GLenum ret;
+    const char * file, * src;
+    
     switch (type) {
         
-        case VERTEX_SHADER_PROGRAM:
-            ret = GL_VERTEX_SHADER;
+        case VERTEX_SHADER:
+            file = "/vertex.glsl";
             break;
         
-        case FRAGMENT_SHADER_PROGRAM:
-            ret = GL_FRAGMENT_SHADER;
+        case FRAGMENT_SHADER:
+            file = "/fragment.glsl";
             break;
         
-        case GEOMETRY_SHADER_PROGRAM:
-            ret = GL_GEOMETRY_SHADER;
+        case GEOMETRY_SHADER:
+            file = "/geometry.glsl";
             break;
     }
     
-    return ret;
-}
-
-void Shader::compileShader(ShaderType type, const GLchar * src)
-{
+    string path, line, source;
+    path.append(filename);
+    path.append(file);
+    
+    std::ifstream in(path.c_str());
+    while ( std::getline(in, line) ) {
+        source += line + "\n";
+    }
+    
+    src = source.c_str();
+    
     GLenum glType = getGLShaderType(type); 
     shaders[type] = glCreateShader(glType);
     glShaderSource(shaders[type], 1, &src, NULL);
@@ -94,9 +109,30 @@ void Shader::compileShader(ShaderType type, const GLchar * src)
     glAttachShader(program, shaders[type]);
 }
 
+GLenum Shader::getGLShaderType(ShaderType type)
+{
+    GLenum ret;
+    switch (type) {
+        
+        case VERTEX_SHADER:
+            ret = GL_VERTEX_SHADER;
+            break;
+        
+        case FRAGMENT_SHADER:
+            ret = GL_FRAGMENT_SHADER;
+            break;
+        
+        case GEOMETRY_SHADER:
+            ret = GL_GEOMETRY_SHADER;
+            break;
+    }
+    
+    return ret;
+}
+
 void Shader::use()
 {
-    glUseProgram(program);
+    if (isValid()) glUseProgram(program);
 }
 
 bool Shader::isValid()

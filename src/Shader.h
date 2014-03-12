@@ -13,47 +13,30 @@
 #define NUM_SHADERS 3
 
 typedef enum {
-    VERTEX_SHADER_PROGRAM,
-    FRAGMENT_SHADER_PROGRAM,
-    GEOMETRY_SHADER_PROGRAM
+    VERTEX_SHADER,
+    FRAGMENT_SHADER,
+    GEOMETRY_SHADER
 } ShaderType;
 
-static const GLchar * defaultVertexShader = "       \n\
-#version 110                                        \n\
-                                                    \n\
-attribute vec3 vtx;                                 \n\
-                                                    \n\
-uniform mat4 mvp;                                   \n\
-                                                    \n\
-void main() {                                       \n\
-    gl_Position = mvp * vec4(vtx, 1.0);             \n\
-}";
-
-static const GLchar * defaultFragmentShader = "     \n\
-#version 110                                        \n\
-                                                    \n\
-uniform vec3 color;                                 \n\
-                                                    \n\
-void main() {                                       \n\
-    gl_FragColor = vec4(color, 1.0);                \n\
-}";
-
-static const GLchar * defaultGeometryShader = "     \n\
-#version 110                                        \n\
-                                                    \n\
-void main() {                                       \n\
-}";
+typedef struct {
+    GLclampf Ka, Kd, Ks;
+    
+    struct Color3f {
+        float r, b, g;
+    };
+} Material;
 
 class Shader
 {
 public:
-	Shader(const GLchar * vertexShaderSource   = defaultVertexShader,
-           const GLchar * fragmentShaderSource = defaultFragmentShader,
-           const GLchar * geometryShaderSource = defaultGeometryShader);
+    Shader(const char * filename = NULL);
 	~Shader();
     
-    GLuint getAttribLocation(const char * attrib)       { return glGetAttribLocation(program, attrib); }
-    GLuint getUniformLocation(const char * uniform)     { return glGetUniformLocation(program, uniform); }
+    GLuint getAttribLocation(const char * attrib)
+    { return glGetAttribLocation(program, attrib); }
+    
+    GLuint getUniformLocation(const char * uniform)
+    { return glGetUniformLocation(program, uniform); }
     
     void uniform(const char * location, GLfloat v0);
     void uniform(const char * location, GLfloat v0, GLfloat v1);
@@ -67,12 +50,17 @@ public:
     bool isValid();
 
 protected:
+    void compileShader(ShaderType type);
+    
     GLenum getGLShaderType(ShaderType type);
-    void compileShader(ShaderType type, const GLchar * src);
 
 private:
+    const char * filename;
+    
     GLuint program;
     GLuint shaders[3];
+    
+    Material material;
     
     GLint valid;
 };

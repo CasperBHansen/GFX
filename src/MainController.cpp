@@ -12,29 +12,34 @@ using std::cout;
 using std::endl;
 
 #define MOVE_SPEED 0.5f
-#define ROTATE_SPEED 0.5f
+#define ROTATE_SPEED 0.1f
 
 MainController::MainController()
 {
     memset(keys, KEY_STATE_RELEASED, sizeof(keys));
     
-    camera = new Camera(glm::vec3(0,0,-5.0));
-    house = new House();
-    shader = new Shader();
+    camera = new Camera(glm::vec3(0,0,-50.0));
+    shader = new Shader("resources/shaders/phong.shader");
+    object = new Mesh("resources/meshes/teapot.obj");
 }
 
 MainController::~MainController()
 {
-	delete house;
+	delete object;
     delete camera;
+    delete shader;
 }
 
 void MainController::init()
 {
+    cout << "Initializing OpenGL .." << endl;
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    glDepthFunc(GL_LEQUAL);
     
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void MainController::update()
@@ -44,15 +49,44 @@ void MainController::update()
     if (keys[A_KEY])        camera->translate(glm::vec3(1,0,0) * MOVE_SPEED);
     if (keys[D_KEY])        camera->translate(glm::vec3(-1,0,0) * MOVE_SPEED);
     
-    if (keys[UP_KEY])       camera->rotate(glm::vec3(-1,0,0) * ROTATE_SPEED);
-    if (keys[DOWN_KEY])     camera->rotate(glm::vec3(1,0,0) * ROTATE_SPEED); 
-    if (keys[LEFT_KEY])     camera->rotate(glm::vec3(0,1,0) * ROTATE_SPEED);
-    if (keys[RIGHT_KEY])    camera->rotate(glm::vec3(0,-1,0) * ROTATE_SPEED);
+    if (keys[UP_KEY])       object->rotate(glm::vec3(-1,0,0) * ROTATE_SPEED);
+    if (keys[DOWN_KEY])     object->rotate(glm::vec3(1,0,0) * ROTATE_SPEED); 
+    if (keys[LEFT_KEY])     object->rotate(glm::vec3(0,1,0) * ROTATE_SPEED);
+    if (keys[RIGHT_KEY])    object->rotate(glm::vec3(0,-1,0) * ROTATE_SPEED);
 }
 
 void MainController::render()
 {
-    house->render(shader);
+    static float time = 0.0f;
+    
+    glm::mat4 m = object->getTransform();
+    glm::mat4 v = Camera::getActiveCamera()->getTransform();
+    glm::mat4 p = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 1000.0f);
+    
+    shader->use();
+    shader->uniformMatrix4fv("m", glm::value_ptr(m));
+    shader->uniformMatrix4fv("v", glm::value_ptr(v));
+    shader->uniformMatrix4fv("p", glm::value_ptr(p));
+    
+    shader->uniform("Ai", 0.5f, 0.5f, 0.5f);
+    
+    shader->uniform("Li", 0.5f, 0.5f, 0.5f);
+    shader->uniform("Lp", 10 * sin(time), 25.0f, 10 * cos(time));
+    
+    shader->uniform("Ka", 0.50f);
+    shader->uniform("Kd", 0.75f);
+    shader->uniform("Ks", 0.90f);
+    
+    shader->uniform("Oa", 0.0f, 1.0f, 0.0f);
+    shader->uniform("Od", 0.0f, 1.0f, 0.0f);
+    shader->uniform("Os", 1.0f, 1.0f, 1.0f);
+    
+    shader->uniform("Fatt", 1.0f);
+    shader->uniform("n", 20.0f);
+
+    object->render();
+    
+    time += 0.05f;
 }
     
 void MainController::onKeyboard(KeyState state, unsigned char key, int x, int y)

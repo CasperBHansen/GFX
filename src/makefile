@@ -1,21 +1,26 @@
-CXX=g++ -std=c++11 -I/usr/include -Wall -pedantic
-LDFLAGS=-lGL -lGLU -lglut -lGLEW
-SRC=*.cpp
-OBJ=*.o
+CXX=g++ -std=c++11 -Wall -pedantic
+LDFLAGS=-I/usr/include
+LIBS=-lGL -lGLU -lglut -lGLEW
 PROJECT='Introduction to Computer Graphics'
-PROD=GFX
+TARGET=Graphics
 
-build:
-	clear
-	$(CXX) $(SRC) $(LDFLAGS) -o $(PROD)
+SRC:=$(wildcard *.cpp)
+OBJ:=$(SRC:.cpp=.o)
+
+all: $(OBJ)
+	@$(CXX) $(LDFLAGS) $(LIBS) $(OBJ) -o $(TARGET)
+
+%.o: %.cpp
+	@echo "Compiling $<.."
+	@$(CXX) $(LDFLAGS) $(LIBS) -c $< -o $@
 
 run:
-	./$(PROD)
+	./$(TARGET)
 
 class:
 	./.cpp_class.sh $(NAME) $(PROJECT)
 
 clean:
-	rm -rf *.{o}
+	rm -rf *.o $(TARGET)
 
 .PHONY: clean class run
