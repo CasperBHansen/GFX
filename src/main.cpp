@@ -30,14 +30,23 @@ static void render_callback()
     if ( (curr_time - last_time) > FRAME_RATE ) {
         
         program->update();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT/*| GL_DEPTH_BUFFER_BIT*/);
         program->render();
         glutSwapBuffers();
-        
         last_time = curr_time;
     }
     
     glutPostRedisplay();
+}
+
+static void resize_callback(int width, int height)
+{
+    program->onResize(width, height);
+}
+
+static void mouse_callback(int button, int state, int x, int y)
+{
+    program->onMouse(button, state, x, y);
 }
 
 static void kbd_down_callback(unsigned char key, int x, int y)
@@ -67,6 +76,8 @@ int main(int argc, char * argv[]) {
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutCreateWindow("Introduction to Computer Graphics");
     glutDisplayFunc(&render_callback);
+    glutReshapeFunc(&resize_callback);
+    glutMouseFunc(&mouse_callback);
     glutKeyboardFunc(&kbd_down_callback);
     glutKeyboardUpFunc(&kbd_up_callback);
     glutSpecialFunc(&kbd_special_down_callback);
@@ -80,7 +91,7 @@ int main(int argc, char * argv[]) {
     
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
     
-    program = new MainController;
+    program = new MainController(WINDOW_WIDTH, WINDOW_HEIGHT);
     program->init();
 
     glutMainLoop();
