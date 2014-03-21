@@ -52,11 +52,6 @@ void Camera::setActiveCamera(Camera * camera)
 glm::mat4 Camera::getTransform()
 {
     return Object::getTransform();
-/*
-    glm::mat4 projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 1000.0f);
-    glm::mat4 view = Object::getTransform();
-    return projection * view;
- */
 }
 
 glm::mat4 Camera::getParallelTransform()

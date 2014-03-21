@@ -31,6 +31,10 @@ public:
     void setRotation(const glm::vec3 &vec);
     void setScale(const glm::vec3 &vec);
     
+    glm::vec3 getPosition() const;
+    glm::vec3 getRotation() const;
+    glm::vec3 getScale() const;
+    
     void translate(const glm::vec3 &vec);
     void rotate(const glm::vec3 &vec);
     void scale(const glm::vec3 &vec);
@@ -39,12 +43,11 @@ public:
     
 protected:
     glm::vec3 _position;
+    glm::vec3 _scale;
+    glm::vec3 _rotation;
     
 private:
     glm::mat4 matrix;
-    
-    glm::vec3 _scale;
-    glm::vec3 _rotation;
 };
 
 #endif // OBJECT_H

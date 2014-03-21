@@ -30,7 +30,7 @@ static void render_callback()
     if ( (curr_time - last_time) > FRAME_RATE ) {
         
         program->update();
-        glClear(GL_COLOR_BUFFER_BIT/*| GL_DEPTH_BUFFER_BIT*/);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         program->render();
         glutSwapBuffers();
         last_time = curr_time;

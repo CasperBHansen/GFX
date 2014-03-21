@@ -7,6 +7,8 @@
 
 #include "Shader.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include <iostream>
 using std::cout;
 using std::cerr;
@@ -160,7 +162,12 @@ void Shader::uniform(const char * location, GLfloat v0, GLfloat v1, GLfloat v2, 
     glUniform4f(getUniformLocation(location), v0, v1, v2, v3);
 }
 
-void Shader::uniformMatrix4fv(const char * location, const GLfloat * value)
+void Shader::uniform(const char * location, const glm::vec3 vector)
 {
-    glUniformMatrix4fv(getUniformLocation(location), 1, GL_FALSE, value);
+    glUniform3f(getUniformLocation(location), vector.x, vector.y, vector.z);
+}
+
+void Shader::uniform(const char * location, const glm::mat4 matrix)
+{
+    glUniformMatrix4fv(getUniformLocation(location), 1, GL_FALSE, glm::value_ptr(matrix));
 }

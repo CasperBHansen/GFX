@@ -8,7 +8,10 @@
 #ifndef SHADER_H
 #define SHADER_H
 
+#define GLM_FORCE_RADIANS
+
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 
 #define NUM_SHADERS 3
 
@@ -43,7 +46,8 @@ public:
     void uniform(const char * location, GLfloat v0, GLfloat v1, GLfloat v2);
     void uniform(const char * location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3);
     
-    void uniformMatrix4fv(const char * location, const GLfloat * value);
+    void uniform(const char * location, const glm::vec3 vector);
+    void uniform(const char * location, const glm::mat4 matrix);
     
     void use();
     

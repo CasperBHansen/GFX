@@ -80,6 +80,10 @@ void Object::setPosition(const glm::vec3 &vec)  { _position = vec; }
 void Object::setRotation(const glm::vec3 &vec)  { _rotation = vec; }
 void Object::setScale(const glm::vec3 &vec)     { _scale = vec; }
 
+glm::vec3 Object::getPosition() const           { return _position; }
+glm::vec3 Object::getRotation() const           { return _rotation; }
+glm::vec3 Object::getScale() const              { return _scale; }
+
 void Object::translate(const glm::vec3 &vec)    { _position += vec; }
 void Object::rotate(const glm::vec3 &vec)       { _rotation += vec; }
 void Object::scale(const glm::vec3 &vec)        { _scale *= vec; }

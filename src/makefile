@@ -4,7 +4,7 @@ LIBS=-lGL -lGLU -lglut -lGLEW
 PROJECT='Introduction to Computer Graphics'
 TARGET=Graphics
 
-SRC:=$(wildcard *.cpp)
+SRC:=$(wildcard *.cpp) $(wildcard */*.cpp)
 OBJ:=$(SRC:.cpp=.o)
 
 all: $(OBJ)

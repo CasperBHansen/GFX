@@ -13,9 +13,12 @@
 
 #include "Camera.h"
 #include "Shader.h"
-#include "Mesh.h"
+// #include "Mesh.h"
+#include "BezierPatchModel.h"
 
-#include "BezierVec4.h"
+// tests
+#include "TestRead.h"
+#include "TestBezierPatch.h"
 
 #define NUM_KEYS 10
 
@@ -34,14 +37,20 @@ typedef enum {
     W_KEY,
     A_KEY,
     S_KEY,
-    D_KEY
+    D_KEY,
+    PLUS_KEY,
+    MINUS_KEY
 } Key;
 
-struct Point {
-    int x, y;
-};
-
 #include <vector>
+
+#define MODEL_COUNT 4
+typedef enum {
+    MODEL_TEAPOT,
+    MODEL_PAIN,
+    MODEL_ROCKET,
+    MODEL_PATCHES
+} ModelId;
 
 class MainController
 {
@@ -63,17 +72,13 @@ public:
 protected:
 private:
     int width, height;
+    int model;
     
     Camera * camera;
-    Mesh * object;
-    
     Shader * shader;
+    BezierPatchModel * models[MODEL_COUNT];
     
     bool keys[NUM_KEYS];
-    
-    int count;
-    Point points[4];
-    std::vector<BezierVec4> curves;
 };
 
 #endif // MAINCONTROLLER_H
