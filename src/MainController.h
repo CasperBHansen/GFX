@@ -10,23 +10,15 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <vector>
 
 #include "Camera.h"
 #include "Shader.h"
-// #include "Mesh.h"
 #include "BezierPatchModel.h"
+#include "DiniSurface.h"
+#include "KleinBottle.h"
 
-// tests
-#include "TestRead.h"
-#include "TestBezierPatch.h"
-
-#define NUM_KEYS 10
-
-typedef bool KeyState;
-
-#define KEY_STATE_DEPRESSED true
-#define KEY_STATE_RELEASED  false
-
+#define NUM_KEYS 12
 typedef enum {
     ENTER_KEY,
     SPACE_KEY,
@@ -34,15 +26,23 @@ typedef enum {
     DOWN_KEY,
     LEFT_KEY,
     RIGHT_KEY,
-    W_KEY,
     A_KEY,
-    S_KEY,
     D_KEY,
+    S_KEY,
+    W_KEY,
     PLUS_KEY,
     MINUS_KEY
 } Key;
 
-#include <vector>
+#define KEY_STATE_DEPRESSED true
+#define KEY_STATE_RELEASED  false
+typedef bool KeyState;
+
+#define DEMO_COUNT 2
+typedef enum {
+    DEMO_MODELS,
+    DEMO_SURFACES
+} DemoId;
 
 #define MODEL_COUNT 4
 typedef enum {
@@ -51,6 +51,12 @@ typedef enum {
     MODEL_ROCKET,
     MODEL_PATCHES
 } ModelId;
+
+#define SURFACE_COUNT 2
+typedef enum {
+    SURFACE_DINI,
+    SURFACE_KLEIN_BOTTLE
+} SurfaceId;
 
 class MainController
 {
@@ -72,11 +78,13 @@ public:
 protected:
 private:
     int width, height;
-    int model;
+    int model, surface;
+    int demo;
     
     Camera * camera;
     Shader * shader;
     BezierPatchModel * models[MODEL_COUNT];
+    GeneralSurface * surfaces[SURFACE_COUNT];
     
     bool keys[NUM_KEYS];
 };

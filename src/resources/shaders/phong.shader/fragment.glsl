@@ -27,16 +27,21 @@ void main() {
     vec3 L = normalize(Lp - P);  // light vector
     float NL = max(0.0, dot(N, L));
     float vAngle = dot(N, E);
-    
+
     vec3 R = normalize((2.0 * N * NL) - L);
     if ( dot(R, N) < 0.0) R = vec3(0.0);
-    
+
     float s = max(pow(dot(R, E), n), 0.0);
-    
+
     vec3 R_a = Ai * Oa * Ka;
-	vec3 R_d = Li * Od * Kd * NL;
-	vec3 R_s = Li * Os * Ks * s;
-    
-    gl_FragColor = vec4(R_a + R_d + R_s, 1.0);
+    vec3 R_d = Li * Od * Kd * NL;
+    vec3 R_s = Li * Os * Ks * s;
+
+    vec3 color = R_a + R_d + R_s;
+
+    if ( gl_FrontFacing )
+        gl_FragColor = vec4(color.x, color.y, color.z, 1.0);
+    else
+        gl_FragColor = vec4(0.81 - color.y, 0.81 - color.x, 0.81 - color.z, 1.0);
 }
 

@@ -23,7 +23,9 @@ MainController::MainController(int width, int height)
     
     memset(keys, KEY_STATE_RELEASED, sizeof(keys));
     
-    model = MODEL_TEAPOT;
+    demo    = DEMO_MODELS;
+    model   = MODEL_TEAPOT;
+    surface = SURFACE_DINI;
     
     camera = new Camera(glm::vec3(0.0f, -1.0f, -10.0f));
     shader = new Shader("resources/shaders/phong.shader");
@@ -32,12 +34,19 @@ MainController::MainController(int width, int height)
     models[MODEL_PAIN]    = new BezierPatchModel("resources/data/pain.data");
     models[MODEL_ROCKET]  = new BezierPatchModel("resources/data/rocket.data");
     models[MODEL_PATCHES] = new BezierPatchModel("resources/data/patches.data");
+    
+    int N = 64;
+    surfaces[SURFACE_DINI]          = new DiniSurface(N, N, 2.0f, 0.2f);
+    surfaces[SURFACE_KLEIN_BOTTLE]  = new KleinBottle(N, N);
 }
 
 MainController::~MainController()
 {
     for (int i = 0; i < MODEL_COUNT; ++i)
         release(models[i]);
+    
+    for (int i = 0; i < SURFACE_COUNT; ++i)
+        release(surfaces[i]);
 
 	release(camera);
     release(shader);
@@ -49,12 +58,20 @@ void MainController::init()
     
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-    
+/*
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+ */
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void MainController::update()
 {
+    static int last_time = glutGet(GLUT_ELAPSED_TIME);
+    static int curr_time = 0;
+    
+    curr_time = glutGet(GLUT_ELAPSED_TIME);
+    
     if (keys[W_KEY])        camera->translate(glm::vec3(0,0,1) * MOVE_SPEED);
     if (keys[S_KEY])        camera->translate(glm::vec3(0,0,-1) * MOVE_SPEED);
     if (keys[A_KEY])        camera->translate(glm::vec3(1,0,0) * MOVE_SPEED);
@@ -65,9 +82,19 @@ void MainController::update()
     if (keys[LEFT_KEY])     camera->rotate(glm::vec3(0,1,0) * ROTATE_SPEED);
     if (keys[RIGHT_KEY])    camera->rotate(glm::vec3(0,-1,0) * ROTATE_SPEED);
     
-    if (keys[SPACE_KEY])    model = (model + 1) % 4;
+    // don't react so quickly for these keys
+    if ( (curr_time - last_time) < 60 )
+        return;
+    
+    if (keys[ENTER_KEY])    demo = (demo + 1) % SURFACE_COUNT;
+    if (keys[SPACE_KEY])    {
+                                model   = (model + 1) % MODEL_COUNT;
+                                surface = (surface + 1) % SURFACE_COUNT;
+                            }
     if (keys[PLUS_KEY])     models[model]->increaseLevel();
     if (keys[MINUS_KEY])    models[model]->decreaseLevel();
+    
+    last_time = curr_time;
 }
 
 void MainController::render()
@@ -83,23 +110,32 @@ void MainController::render()
     shader->uniform("mvp", mvp);
     shader->uniform("eye", Camera::getActiveCamera()->getPosition());
     
-    shader->uniform("Ai", 0.25f, 0.25f, 0.25f);
+    shader->uniform("Ai", 0.5f, 0.5f, 0.5f);
     
-    shader->uniform("Li", 0.5f, 0.5f, 0.5f);
+    shader->uniform("Li", 0.62f, 0.62f, 0.62f);
     shader->uniform("Lp", 10 * sin(time), 10 * cos(time), 0.0f);
     
     shader->uniform("Ka", 0.38f);
     shader->uniform("Kd", 0.68f);
-    shader->uniform("Ks", 0.81f);
+    shader->uniform("Ks", 0.92f);
     
-    shader->uniform("Oa", 0.0f, 1.0f, 0.0f);
-    shader->uniform("Od", 0.0f, 1.0f, 0.0f);
+    shader->uniform("Oa", 0.5f, 0.04f, 0.29f);
+    shader->uniform("Od", 1.0f, 0.08f, 0.58f);
     shader->uniform("Os", 1.0f, 1.0f, 1.0f);
     
     shader->uniform("Fatt", 1.0f);
-    shader->uniform("n", 20.0f);
+    shader->uniform("n", 50.0f);
 
-    models[model]->render();
+    switch (demo)
+    {
+        case DEMO_MODELS:
+            models[model]->render();
+            break;
+        
+        case DEMO_SURFACES:
+            surfaces[surface]->render();
+            break;
+    }
     
     time += 0.1f;
     frame += 1;
@@ -144,11 +180,11 @@ void MainController::onKeyboard(KeyState state, unsigned char key, int x, int y)
             keys[D_KEY] = state;
             break;
         
-        case 'p':
+        case '+':
             keys[PLUS_KEY] = state;
             break;
         
-        case 'm':
+        case '-':
             keys[MINUS_KEY] = state;
             break;
     }

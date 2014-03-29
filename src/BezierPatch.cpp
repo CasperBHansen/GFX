@@ -1,7 +1,5 @@
 #include "BezierPatch.h"
 
-#include <iostream> // TODO: REMOVE BEFORE RELEASE
-
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 

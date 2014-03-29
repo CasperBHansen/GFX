@@ -10,13 +10,13 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
-#include "MainController.h"
-
 #define WINDOW_WIDTH  600
 #define WINDOW_HEIGHT 480
 
 #define FRAMES_PER_SECOND 30
 #define FRAME_RATE (1000 / FRAMES_PER_SECOND)
+
+#include "MainController.h"
 
 MainController * program;
 

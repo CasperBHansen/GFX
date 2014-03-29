@@ -17,12 +17,15 @@
 #include "utilities/glmutils.h"
 #include "BezierPatch.h"
 
-#define BUFFER_COUNT 2
+#ifndef BUFFER_COUNT
+#define BUFFER_COUNT 3
+
 typedef enum {
 	VERTEX_BUFFER,
 	NORMAL_BUFFER,
-//	TEXCOORD_BUFFER
+    TEXCOORD_BUFFER
 } BufferId;
+#endif
 
 class BezierPatchModel : public Object
 {

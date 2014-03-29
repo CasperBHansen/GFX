@@ -15,7 +15,7 @@ BezierPatchModel::BezierPatchModel(const char * filename)
 {
     try {
         ReadBezierPatches(filename, patches);
-        setLevel(0);
+        setLevel(1);
     }
     catch (const std::exception &e) {
         std::cerr << "Exception: " << e.what() << std::endl;
@@ -113,25 +113,26 @@ void BezierPatchModel::subdivide(const BezierPatch &patch, int n)
         T = glm::vec4(t*t*t, t*t, t, 1.0f);
         glm::vec3 P4 = S * MTGM * T;
         
-        glm::vec3 N1 = glm::cross(P1-P3, P1-P2);
-        glm::vec3 N2 = glm::cross(P1-P4, P1-P3);
-        glm::vec3 N = glm::normalize( (N1 + N2) / 2.0f );
+        glm::vec3 N1 = glm::cross(P1-P2, P1-P3);
+        glm::vec3 N2 = glm::cross(P1-P3, P1-P4);
+    
+        glm::vec3 N  = glm::normalize( (N1 + N2) / 2.0f );
         
         normals.push_back(N);
         normals.push_back(N);
         normals.push_back(N);
         
         vertices.push_back(P1);
+        vertices.push_back(P3);
         vertices.push_back(P2);
-        vertices.push_back(P3);
         
         normals.push_back(N);
         normals.push_back(N);
         normals.push_back(N);
         
         vertices.push_back(P1);
-        vertices.push_back(P3);
         vertices.push_back(P4);
+        vertices.push_back(P3);
     }
     else {
         BezierPatch G11 = glm::transpose(DLB) * patch * DLB;
@@ -175,3 +176,4 @@ void BezierPatchModel::decreaseLevel()
 {
     setLevel(level - 1);
 }
+

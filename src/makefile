@@ -21,6 +21,6 @@ class:
 	./.cpp_class.sh $(NAME) $(PROJECT)
 
 clean:
-	rm -rf *.o $(TARGET)
+	rm -rf *.o */*.o $(TARGET)
 
 .PHONY: clean class run

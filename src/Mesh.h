@@ -12,13 +12,15 @@
 
 #include <GL/glew.h>
 
+#ifndef BUFFER_COUNT
+#define BUFFER_COUNT 3
+
 typedef enum {
 	VERTEX_BUFFER,
 	NORMAL_BUFFER,
-	TEXCOORD_BUFFER
+    TEXCOORD_BUFFER
 } BufferId;
-
-#define BUFFER_COUNT 3
+#endif
 
 class Mesh : public Object
 {
