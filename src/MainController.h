@@ -12,14 +12,21 @@
 #include <GL/freeglut.h>
 #include <vector>
 
+#define POINTS      (1 << 0)
+#define LINES       (1 << 1)
+#define SURFACE     (1 << 2)
+
 #include "Camera.h"
 #include "Shader.h"
 #include "BezierPatchModel.h"
 #include "DiniSurface.h"
 #include "KleinBottle.h"
 
-#define NUM_KEYS 12
+#define NUM_KEYS 15
 typedef enum {
+    NUM_1_KEY,
+    NUM_2_KEY,
+    NUM_3_KEY,
     ENTER_KEY,
     SPACE_KEY,
     UP_KEY,
@@ -79,10 +86,10 @@ protected:
 private:
     int width, height;
     int model, surface;
-    int demo;
+    int demo, mask;
     
     Camera * camera;
-    Shader * shader;
+    Shader * phong, * twoside;
     BezierPatchModel * models[MODEL_COUNT];
     GeneralSurface * surfaces[SURFACE_COUNT];
     

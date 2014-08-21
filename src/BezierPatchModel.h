@@ -35,14 +35,15 @@ public:
     
     void update();
     
-    void render() const;
-    void subdivide(const BezierPatch &patch, int n);
+    void render(int mask) const;
     
     void setLevel(int n);
     void increaseLevel();
     void decreaseLevel();
 
 protected:
+    void subdivide(const BezierPatch &patch, int n);
+    
 private:
     int level, num_vertices;
     std::vector<glm::vec3> vertices;

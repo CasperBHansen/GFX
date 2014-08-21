@@ -40,12 +40,13 @@ public:
     float distanceTo(Object * object);
     
 protected:
+    glm::mat4 matrix;
+    
     glm::vec3 _position;
     glm::vec3 _scale;
     glm::vec3 _rotation;
     
 private:
-    glm::mat4 matrix;
 };
 
 #endif // OBJECT_H

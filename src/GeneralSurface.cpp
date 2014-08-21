@@ -7,6 +7,10 @@
 
 #include "GeneralSurface.h"
 
+#define POINTS      (1 << 0)
+#define LINES       (1 << 1)
+#define SURFACE     (1 << 2)
+
 #include <iostream>
 #include <vector>
 
@@ -20,14 +24,6 @@ GeneralSurface::GeneralSurface(int N, int M,
     this->u_max = u_max;
     this->v_min = v_min;
     this->v_max = v_max;
-    
-    std::cout << "Surface Information" << std::endl;
-    std::cout << "N: "      << N << std::endl;
-    std::cout << "M: "      << M << std::endl;
-    std::cout << "u_min: "  << u_min << std::endl;
-    std::cout << "u_max: "  << u_max << std::endl;
-    std::cout << "v_min: "  << v_min << std::endl;
-    std::cout << "v_max: "  << v_max << std::endl;
     
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -99,7 +95,7 @@ void GeneralSurface::initializeSurface(int parts)
     normals.clear();
 }
 
-void GeneralSurface::render() const
+void GeneralSurface::render(int mask) const
 {
     glBindVertexArray(vao);
 	
@@ -109,7 +105,9 @@ void GeneralSurface::render() const
 		glVertexAttribPointer(id, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	}
 
-	glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+    if (mask & SURFACE) glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+    if (mask & LINES)   glDrawArrays(GL_LINES, 0, num_vertices);
+    if (mask & POINTS)  glDrawArrays(GL_POINTS, 0, num_vertices);
 	
 	glBindVertexArray(0);
 }

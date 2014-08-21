@@ -27,13 +27,13 @@ typedef enum {
 class GeneralSurface : public Object
 {
 public:
-	GeneralSurface(int N, int M,
+    GeneralSurface(int N, int M,
                    float u_min, float u_max,
                    float v_min, float v_max);
-	virtual ~GeneralSurface();
+    virtual ~GeneralSurface();
     
     void initializeSurface(int parts);
-    virtual void render() const;
+    virtual void render(int mask) const;
     
     virtual glm::vec3 vertexAt(int part, float u, float v) = 0;
     virtual glm::vec3 normalAt(int part, float u, float v) = 0;

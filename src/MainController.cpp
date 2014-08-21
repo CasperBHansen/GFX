@@ -26,9 +26,12 @@ MainController::MainController(int width, int height)
     demo    = DEMO_MODELS;
     model   = MODEL_TEAPOT;
     surface = SURFACE_DINI;
+    mask    = SURFACE;
     
-    camera = new Camera(glm::vec3(0.0f, -1.0f, -10.0f));
-    shader = new Shader("resources/shaders/phong.shader");
+    camera  = new Camera(glm::vec3(0.0f, -5.0f, -10.0f),
+                         glm::vec3(0.0f, 0.0f, 0.0f));
+    phong   = new Shader("resources/shaders/phong.shader");
+    twoside = new Shader("resources/shaders/two-sided-phong.shader");
     
     models[MODEL_TEAPOT]  = new BezierPatchModel("resources/data/teapot.data");
     models[MODEL_PAIN]    = new BezierPatchModel("resources/data/pain.data");
@@ -36,7 +39,7 @@ MainController::MainController(int width, int height)
     models[MODEL_PATCHES] = new BezierPatchModel("resources/data/patches.data");
     
     int N = 64;
-    surfaces[SURFACE_DINI]          = new DiniSurface(N, N, 2.0f, 0.2f);
+    surfaces[SURFACE_DINI]          = new DiniSurface(N, N, 0.5f, 0.2f);
     surfaces[SURFACE_KLEIN_BOTTLE]  = new KleinBottle(N, N);
 }
 
@@ -48,8 +51,10 @@ MainController::~MainController()
     for (int i = 0; i < SURFACE_COUNT; ++i)
         release(surfaces[i]);
 
+    release(phong);
+    release(twoside);
+    
 	release(camera);
-    release(shader);
 }
 
 void MainController::init()
@@ -86,6 +91,10 @@ void MainController::update()
     if ( (curr_time - last_time) < 60 )
         return;
     
+    if (keys[NUM_1_KEY])    mask = POINTS;
+    if (keys[NUM_2_KEY])    mask = LINES;
+    if (keys[NUM_3_KEY])    mask = SURFACE;
+    
     if (keys[ENTER_KEY])    demo = (demo + 1) % SURFACE_COUNT;
     if (keys[SPACE_KEY])    {
                                 model   = (model + 1) % MODEL_COUNT;
@@ -101,11 +110,15 @@ void MainController::render()
 {
     static unsigned long frame = 0;
     static float time = 0.0f;
+    static Shader * shader = NULL;
     
     glm::mat4 mv  = Camera::getActiveCamera()->getTransform() * models[model]->getTransform();
     glm::mat4 mvp = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f) * mv;
     
-    shader->use();
+    if (demo == DEMO_SURFACES && surface == SURFACE_DINI) Shader::use(twoside);
+    else Shader::use(phong);
+    
+    shader = Shader::getActiveShader();
     shader->uniform("mv",  mv);
     shader->uniform("mvp", mvp);
     shader->uniform("eye", Camera::getActiveCamera()->getPosition());
@@ -113,7 +126,7 @@ void MainController::render()
     shader->uniform("Ai", 0.5f, 0.5f, 0.5f);
     
     shader->uniform("Li", 0.62f, 0.62f, 0.62f);
-    shader->uniform("Lp", 10 * sin(time), 10 * cos(time), 0.0f);
+    shader->uniform("Lp", 5.0f * sinf(time), 5.0f, 5.0f * sinf(time + (M_PI / 2.0f)));
     
     shader->uniform("Ka", 0.38f);
     shader->uniform("Kd", 0.68f);
@@ -129,15 +142,15 @@ void MainController::render()
     switch (demo)
     {
         case DEMO_MODELS:
-            models[model]->render();
+            models[model]->render(mask);
             break;
         
         case DEMO_SURFACES:
-            surfaces[surface]->render();
+            surfaces[surface]->render(mask);
             break;
     }
     
-    time += 0.1f;
+    time += 0.05f;
     frame += 1;
 }
 
@@ -155,9 +168,21 @@ void MainController::onKeyboard(KeyState state, unsigned char key, int x, int y)
         case 27:
             glutLeaveMainLoop();
             break;
-    
+        
         case 13:
             keys[ENTER_KEY] = state;
+            break;
+    
+        case '1':
+            keys[NUM_1_KEY] = state;
+            break;
+    
+        case '2':
+            keys[NUM_2_KEY] = state;
+            break;
+    
+        case '3':
+            keys[NUM_3_KEY] = state;
             break;
     
         case ' ':

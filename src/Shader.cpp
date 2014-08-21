@@ -19,6 +19,8 @@ using std::string;
 
 #include <fstream>
 
+Shader * Shader::active = NULL;
+
 Shader::Shader(const char * filename)
 {
     valid = 0;
@@ -63,6 +65,11 @@ Shader::~Shader()
     }
     
     glDeleteProgram(program);
+}
+
+Shader * Shader::getActiveShader()
+{
+    return active;
 }
 
 void Shader::compileShader(ShaderType type)
@@ -132,9 +139,17 @@ GLenum Shader::getGLShaderType(ShaderType type)
     return ret;
 }
 
+void Shader::use(Shader * shader)
+{
+    shader->use();
+}
+
 void Shader::use()
 {
-    if (isValid()) glUseProgram(program);
+    if (isValid()) {
+        glUseProgram(program);  
+        active = this;
+    }
 }
 
 bool Shader::isValid()

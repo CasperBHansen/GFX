@@ -7,12 +7,17 @@
 
 #include "BezierPatchModel.h"
 
+#define POINTS      (1 << 0)
+#define LINES       (1 << 1)
+#define SURFACE     (1 << 2)
+
 #include <iostream>
 
 #include "ReadBezierPatches.h"
 
 BezierPatchModel::BezierPatchModel(const char * filename)
 {
+    level = 0;
     try {
         ReadBezierPatches(filename, patches);
         setLevel(1);
@@ -147,7 +152,7 @@ void BezierPatchModel::subdivide(const BezierPatch &patch, int n)
     }
 }
 
-void BezierPatchModel::render() const
+void BezierPatchModel::render(int mask) const
 {
 	glBindVertexArray(vao);
 	
@@ -157,8 +162,10 @@ void BezierPatchModel::render() const
 		glVertexAttribPointer(id, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	}
 
-	glDrawArrays(GL_TRIANGLES, 0, num_vertices);
-	
+    if (mask & SURFACE) glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+    if (mask & LINES)   glDrawArrays(GL_LINES, 0, num_vertices);
+    if (mask & POINTS)  glDrawArrays(GL_POINTS, 0, num_vertices);
+    
 	glBindVertexArray(0);
 }
 

@@ -13,10 +13,6 @@
 #include "glm/gtc/matrix_access.hpp"
 #include "glm/gtx/transform.hpp"
 
-#define POINTS      (1 << 0)
-#define LINES       (1 << 1)
-#define SURFACE     (1 << 2)
-
 /**
  * \class BezierRow 
  * implements the concept of a row of a geometry matrix for a parametric surface where

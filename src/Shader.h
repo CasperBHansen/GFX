@@ -35,6 +35,8 @@ public:
     Shader(const char * filename = NULL);
 	~Shader();
     
+    static Shader * getActiveShader();
+    
     GLuint getAttribLocation(const char * attrib)
     { return glGetAttribLocation(program, attrib); }
     
@@ -49,6 +51,7 @@ public:
     void uniform(const char * location, const glm::vec3 vector);
     void uniform(const char * location, const glm::mat4 matrix);
     
+    static void use(Shader * shader);
     void use();
     
     bool isValid();
@@ -59,6 +62,8 @@ protected:
     GLenum getGLShaderType(ShaderType type);
 
 private:
+    static Shader * active;
+    
     const char * filename;
     
     GLuint program;

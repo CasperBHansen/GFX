@@ -13,7 +13,8 @@
 class Camera : public Object
 {
 public:
-	Camera(const glm::vec3 &position = glm::vec3(0,0,0));
+	Camera(const glm::vec3 &position = glm::vec3(0.0f, 0.0f, 0.0f),
+           const glm::vec3 &rotation = glm::vec3(0.0f, 0.0f, 0.0f));
 	virtual ~Camera();
     
     static Camera * getActiveCamera();
